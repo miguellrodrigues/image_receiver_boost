@@ -25,19 +25,12 @@ void session::start() {
     read();
 }
 
-int buffToInteger(const char * buffer)
-{
-    int a = static_cast<int>(static_cast<unsigned char>(buffer[0]) << 24 |
-                             static_cast<unsigned char>(buffer[1]) << 16 |
-                             static_cast<unsigned char>(buffer[2]) << 8 |
-                             static_cast<unsigned char>(buffer[3]));
-    return a;
-}
-
-
 void session::do_read(const char *data, boost::system::error_code error_code, std::size_t length) {
     if (to_receive == 0) {
-        to_receive = buffToInteger(data);
+        to_receive = int((u_char)data[0] << 24 |
+                         (u_char)data[1] << 16 |
+                         (u_char)data[2] << 8  |
+                         (u_char)data[3]);
 
         std::cout << "Starting to receive " << to_receive << " bytes of data" << '\n';
 
