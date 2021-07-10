@@ -27,6 +27,8 @@ boost/bind/bind.hpp
 -
 iostream
 -
+string
+-
 
 /home/miguellr/CLionProjects/image_receiver_boost/src/tcp_server.cpp
 ../include/tcp_server.hpp

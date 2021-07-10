@@ -22,7 +22,7 @@ public:
 private:
     void read();
 
-    void write(std::size_t length);
+    void write(const char * to_write, std::size_t length);
 
     void do_read(const char *, boost::system::error_code, std::size_t);
 
@@ -35,10 +35,15 @@ private:
     tcp::socket _socket;
 
     enum {
-        max_length = 65535 * 3
+        max_length = 1024 * 64
     };
 
     char _data[max_length];
+
+    std::vector<const char *> temp_data;
+
+    int to_receive = 0;
+    unsigned int received = 0;
 };
 
 #endif //IMAGE_RECEIVER_BOOST_SESSION_HPP

@@ -25,15 +25,12 @@ void read(const char *data, boost::system::error_code error_code, std::size_t) {
 
         decoded_data.clear();
         image.release();
-
-        payload.clear();
     } else {
         std::cout << "Error " << error_code << '\n';
     }
 }
 
 void write(const char *, boost::system::error_code, std::size_t) {
-
 }
 
 int main() {
