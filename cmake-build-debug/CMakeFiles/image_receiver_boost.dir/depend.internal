@@ -39,7 +39,6 @@ CMakeFiles/image_receiver_boost.dir/app/main.cpp.o
  /usr/local/include/opencv4/opencv2/opencv_modules.hpp
  /usr/local/include/opencv4/opencv2/videoio.hpp
 CMakeFiles/image_receiver_boost.dir/src/session.cpp.o
- /home/miguellr/CLionProjects/image_receiver_boost/include/base64.hpp
  /home/miguellr/CLionProjects/image_receiver_boost/include/session.hpp
  /home/miguellr/CLionProjects/image_receiver_boost/src/session.cpp
 CMakeFiles/image_receiver_boost.dir/src/tcp_server.cpp.o

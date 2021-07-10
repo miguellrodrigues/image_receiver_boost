@@ -38,7 +38,7 @@ private:
         max_length = 1024 * 64
     };
 
-    char _data[max_length];
+    char _data[max_length]{};
 
     std::vector<const char *> temp_data;
 

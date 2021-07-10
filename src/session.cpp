@@ -3,10 +3,13 @@
 //
 
 #include "../include/session.hpp"
-#include "../include/base64.hpp"
 #include <boost/bind/bind.hpp>
 #include <iostream>
 #include <string>
+
+#define READ_TO_RECEIVE_DATA "."
+#define RECEIVING_DATA ";"
+#define READ_TO_RECEIVE_SIZE "/"
 
 session::session(
         tcp::socket socket,
@@ -38,24 +41,32 @@ void session::do_read(const char *data, boost::system::error_code error_code, st
 
         std::cout << "Starting to receive " << to_receive << " bytes of data" << '\n';
 
-        write("d", 1);
+        write(READ_TO_RECEIVE_DATA, 1);
     } else {
         if (received < to_receive) {
-            temp_data.push_back(data);
-
             if (received + length >= to_receive) {
-                this->read_callback(temp_data[0], error_code, length);
+                temp_data.push_back(data);
+
+                std::string eujanaoseioquefazer;
+
+                for (const auto &item : temp_data) {
+                    eujanaoseioquefazer.append(item);
+                }
+
+                temp_data.clear();
+
+                this->read_callback(eujanaoseioquefazer.data(), error_code, length);
 
                 to_receive = 0;
                 received = 0;
 
-                write("g", 1);
+                write(READ_TO_RECEIVE_SIZE, 1);
             } else {
                 received += length;
 
                 std::cout << "Received: " << received << " of " << to_receive << '\n';
 
-                write("r", 1);
+                write(RECEIVING_DATA, 1);
             }
         }
     }
