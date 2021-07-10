@@ -13,6 +13,5 @@ add_executable(image_receiver_boost app/main.cpp
         include/session.hpp
         src/session.cpp
         include/tcp_server.hpp
-        src/tcp_server.cpp
-        )
+        src/tcp_server.cpp)
 target_link_libraries(image_receiver_boost ${Boost_LIBRARIES} ${OpenCV_LIBS})

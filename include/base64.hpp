@@ -173,5 +173,4 @@ inline std::string base64_decode(std::string const &input) {
     return ret;
 }
 
-
 #endif // _BASE64_HPP_

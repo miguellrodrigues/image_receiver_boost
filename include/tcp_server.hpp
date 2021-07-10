@@ -14,8 +14,8 @@ public:
     server(
             boost::asio::io_context &io_context,
             short port,
-            void (*read_callback)(char *, boost::system::error_code, std::size_t),
-            void (*write_callback)(char *, boost::system::error_code, std::size_t))
+            void (*read_callback)(const char *, boost::system::error_code, std::size_t),
+            void (*write_callback)(const char *, boost::system::error_code, std::size_t))
             : _acceptor(io_context, tcp::endpoint(tcp::v4(), port)) {
 
         accept();
@@ -29,9 +29,9 @@ private:
 
     tcp::acceptor _acceptor;
 
-    void (*read_callback)(char *, boost::system::error_code, std::size_t);
+    void (*read_callback)(const char *, boost::system::error_code, std::size_t);
 
-    void (*write_callback)(char *, boost::system::error_code, std::size_t);
+    void (*write_callback)(const char *, boost::system::error_code, std::size_t);
 };
 
 #endif //IMAGE_RECEIVER_BOOST_TCP_SERVER_HPP
