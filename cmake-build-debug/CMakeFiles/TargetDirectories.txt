@@ -1,0 +1,3 @@
+/home/miguellr/CLionProjects/image_receiver_boost/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/miguellr/CLionProjects/image_receiver_boost/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/miguellr/CLionProjects/image_receiver_boost/cmake-build-debug/CMakeFiles/image_receiver_boost.dir
