@@ -28,8 +28,24 @@ string
 string
 -
 
+/home/miguellr/CLionProjects/image_receiver_boost/include/session.hpp
+boost/asio.hpp
+-
+
 /home/miguellr/CLionProjects/image_receiver_boost/include/tcp_server.hpp
 boost/asio.hpp
+-
+
+/home/miguellr/CLionProjects/image_receiver_boost/src/session.cpp
+../include/session.hpp
+/home/miguellr/CLionProjects/image_receiver_boost/include/session.hpp
+../include/base64.hpp
+/home/miguellr/CLionProjects/image_receiver_boost/include/base64.hpp
+boost/bind/bind.hpp
+-
+iostream
+-
+string
 -
 
 /usr/local/include/opencv4/opencv2/core.hpp

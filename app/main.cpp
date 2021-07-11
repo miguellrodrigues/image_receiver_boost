@@ -26,10 +26,10 @@ void read(const char *data, boost::system::error_code error_code, std::size_t) {
             cv::imshow("receiving", image);
             cv::waitKey(1);
 
+            payload.clear();
             decoded_data.clear();
             image.release();
-            payload.clear();
-        }catch (std::exception &e) {
+        } catch (std::exception &e) {
             std::cerr << e.what() << '\n';
         }
     } else {
@@ -41,7 +41,6 @@ void write(const char *, boost::system::error_code, std::size_t) {
 }
 
 int main() {
-
     try {
         boost::asio::io_context io_context;
 
