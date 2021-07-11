@@ -25,15 +25,6 @@ void session::start() {
     read();
 }
 
-int buffToInteger(const char * buffer)
-{
-    auto a = static_cast<int>(static_cast<unsigned char>(buffer[0]) << 24 |
-                             static_cast<unsigned char>(buffer[1]) << 16 |
-                             static_cast<unsigned char>(buffer[2]) << 8 |
-                             static_cast<unsigned char>(buffer[3]));
-    return a;
-}
-
 session::message *session::buffToMessage(const char *buffer)
 {
     auto *buffered_message = (message*)buffer;
@@ -46,9 +37,7 @@ session::message *session::buffToMessage(const char *buffer)
 }
 
 void session::do_read(const char *data, boost::system::error_code error_code, std::size_t length) {
-    std::string rcv(data);
-
-    if (rcv == "EOF") {
+    if (std::string(data) == "EOF") {
         std::cout << "Received: " << received << '\n';
 
         received = 0;
@@ -98,7 +87,12 @@ void session::read() {
 void session::write(const char * to_write, std::size_t length) {
     auto self(shared_from_this());
 
-    boost::asio::async_write(_socket, boost::asio::buffer(to_write, length),
-                             boost::bind(&session::do_write, self, _data, boost::asio::placeholders::error,
+
+    _socket.async_write_some(boost::asio::buffer(to_write, length),
+                             boost::bind(&session::do_write, self, to_write, boost::asio::placeholders::error,
                                          boost::asio::placeholders::bytes_transferred));
+
+    /*boost::asio::async_write(_socket, boost::asio::buffer(to_write, length),
+                             boost::bind(&session::do_write, self, _data, boost::asio::placeholders::error,
+                                         boost::asio::placeholders::bytes_transferred));*/
 }
