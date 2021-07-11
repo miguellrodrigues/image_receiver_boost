@@ -19,6 +19,12 @@ public:
 
     void start();
 
+    struct {
+        unsigned int id;
+
+        char data[1024 * 64];
+    } typedef message;
+
 private:
     void read();
 
@@ -32,24 +38,18 @@ private:
 
     void (*write_callback)(const char *, boost::system::error_code, std::size_t);
 
+    static message *buffToMessage(const char * buffer);
+
     tcp::socket _socket;
 
     enum {
         max_length = 1024 * 64
     };
 
-    enum {
-        RECEIVE_DATA = 0,
-        RECEIVE_DATA_SIZE = 1
-    };
-
     char _data[max_length]{};
 
-    std::vector<const char *> temp_data;
+    std::vector<message *> temp_data;
 
-    unsigned int state = RECEIVE_DATA_SIZE;
-
-    unsigned int to_receive = 0;
     unsigned int received = 0;
 };
 

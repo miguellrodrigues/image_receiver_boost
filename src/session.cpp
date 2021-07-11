@@ -3,14 +3,13 @@
 //
 
 #include "../include/session.hpp"
-#include "../include/base64.hpp"
+#include <algorithm>
 #include <boost/bind/bind.hpp>
 #include <iostream>
 #include <string>
 
 #define READ_TO_RECEIVE_DATA "."
-#define RECEIVING_DATA ";"
-#define READ_TO_RECEIVE_SIZE "/"
+#define RECEIVING_DATA "/"
 
 session::session(
         tcp::socket socket,
@@ -26,55 +25,55 @@ void session::start() {
     read();
 }
 
-unsigned int buffToInteger(const char * buffer)
+int buffToInteger(const char * buffer)
 {
-    auto a = static_cast<unsigned int>(static_cast<unsigned char>(buffer[0]) << 24 |
+    auto a = static_cast<int>(static_cast<unsigned char>(buffer[0]) << 24 |
                              static_cast<unsigned char>(buffer[1]) << 16 |
                              static_cast<unsigned char>(buffer[2]) << 8 |
                              static_cast<unsigned char>(buffer[3]));
     return a;
 }
 
+session::message *session::buffToMessage(const char *buffer)
+{
+    auto *buffered_message = (message*)buffer;
+
+    auto *mn = static_cast<message *>(malloc(sizeof(message)));
+
+    memcpy(mn, buffered_message, sizeof (*buffered_message));
+
+    return mn;
+}
+
 void session::do_read(const char *data, boost::system::error_code error_code, std::size_t length) {
-    if (state == RECEIVE_DATA_SIZE) {
-        to_receive = buffToInteger(data);
+    std::string rcv(data);
 
-        std::cout << "Starting to receive " << to_receive << " bytes of data" << '\n';
+    if (rcv == "EOF") {
+        std::cout << "Received: " << received << '\n';
 
-        state = RECEIVE_DATA;
+        received = 0;
+
+        std::sort(temp_data.begin(), temp_data.end(), [](message *a, message *b) {
+            return a->id < b->id;
+        });
+
+        std::string out;
+
+        for (const auto &item : temp_data) {
+            out.append(std::string(item->data));
+        }
+
+        this->read_callback(out.data(), error_code, length);
+
+        temp_data.clear();
 
         write(READ_TO_RECEIVE_DATA, 1);
     } else {
-        if (received < to_receive) {
-            temp_data.push_back(data);
+        temp_data.push_back(buffToMessage(data));
 
-            received += length;
+        received += length;
 
-            //std::cout << "Received: " << received << " of " << to_receive << '\n';
-
-            if (received >= to_receive) {
-                std::cout << "Received: " << received << " of " << to_receive << '\n';
-
-                to_receive = 0;
-                received = 0;
-
-                std::string out;
-
-                for (const auto &item : temp_data) {
-                    out.append(item);
-                }
-
-                this->read_callback(out.data(), error_code, length);
-
-                temp_data.clear();
-
-                state = RECEIVE_DATA_SIZE;
-
-                write(READ_TO_RECEIVE_SIZE, 1);
-            } else {
-                write(RECEIVING_DATA, 1);
-            }
-        }
+        write(RECEIVING_DATA, 1);
     }
 }
 
