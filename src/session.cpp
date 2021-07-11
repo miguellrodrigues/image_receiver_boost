@@ -3,6 +3,7 @@
 //
 
 #include "../include/session.hpp"
+#include "../include/base64.hpp"
 #include <boost/bind/bind.hpp>
 #include <iostream>
 #include <string>
@@ -35,44 +36,42 @@ unsigned int buffToInteger(const char * buffer)
 }
 
 void session::do_read(const char *data, boost::system::error_code error_code, std::size_t length) {
-    if (to_receive == 0) {
+    if (state == RECEIVE_DATA_SIZE) {
         to_receive = buffToInteger(data);
 
-        std::cout << buffToInteger(data) << '\n';
+        std::cout << "Starting to receive " << to_receive << " bytes of data" << '\n';
 
-        //std::cout << "Starting to receive " << to_receive << " bytes of data" << '\n';
+        state = RECEIVE_DATA;
 
         write(READ_TO_RECEIVE_DATA, 1);
     } else {
         if (received < to_receive) {
             temp_data.push_back(data);
 
-            if (received + length >= to_receive) {
-                received += length;
+            received += length;
 
-                //std::cout << "Received: " << received << " of " << to_receive << '\n';
+            //std::cout << "Received: " << received << " of " << to_receive << '\n';
+
+            if (received >= to_receive) {
+                std::cout << "Received: " << received << " of " << to_receive << '\n';
 
                 to_receive = 0;
                 received = 0;
 
-                temp_data.clear();
-
-                /*std::string eujanaoseioquefazer;
+                std::string out;
 
                 for (const auto &item : temp_data) {
-                    eujanaoseioquefazer.append(item);
+                    out.append(item);
                 }
+
+                this->read_callback(out.data(), error_code, length);
 
                 temp_data.clear();
 
-                this->read_callback(eujanaoseioquefazer.data(), error_code, length);*/
+                state = RECEIVE_DATA_SIZE;
 
                 write(READ_TO_RECEIVE_SIZE, 1);
             } else {
-                received += length;
-
-                //std::cout << "Received: " << received << " of " << to_receive << '\n';
-
                 write(RECEIVING_DATA, 1);
             }
         }

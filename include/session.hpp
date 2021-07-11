@@ -38,9 +38,16 @@ private:
         max_length = 1024 * 64
     };
 
+    enum {
+        RECEIVE_DATA = 0,
+        RECEIVE_DATA_SIZE = 1
+    };
+
     char _data[max_length]{};
 
     std::vector<const char *> temp_data;
+
+    unsigned int state = RECEIVE_DATA_SIZE;
 
     unsigned int to_receive = 0;
     unsigned int received = 0;

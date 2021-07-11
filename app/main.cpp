@@ -17,6 +17,8 @@ void read(const char *data, boost::system::error_code error_code, std::size_t) {
 
             std::vector<unsigned char> decoded_data(payload.begin(), payload.end());
 
+            //std::cout << decoded_data.size() << '\n';
+
             //cv::Mat data_mat(decoded_data, true);
 
             cv::Mat image(cv::imdecode(decoded_data, 1));
@@ -26,6 +28,7 @@ void read(const char *data, boost::system::error_code error_code, std::size_t) {
 
             decoded_data.clear();
             image.release();
+            payload.clear();
         }catch (std::exception &e) {
             std::cerr << e.what() << '\n';
         }
