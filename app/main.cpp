@@ -12,19 +12,23 @@ using namespace cv;
 
 void read(const char *data, boost::system::error_code error_code, std::size_t) {
     if (!error_code) {
-        auto payload = base64_decode(data);
+        try {
+            auto payload = base64_decode(data);
 
-        std::vector<unsigned char> decoded_data(payload.begin(), payload.end());
+            std::vector<unsigned char> decoded_data(payload.begin(), payload.end());
 
-        //cv::Mat data_mat(decoded_data, true);
+            //cv::Mat data_mat(decoded_data, true);
 
-        cv::Mat image(cv::imdecode(decoded_data, 1));
+            cv::Mat image(cv::imdecode(decoded_data, 1));
 
-        cv::imshow("receiving", image);
-        cv::waitKey(1);
+            cv::imshow("receiving", image);
+            cv::waitKey(1);
 
-        decoded_data.clear();
-        image.release();
+            decoded_data.clear();
+            image.release();
+        }catch (std::exception &e) {
+            std::cerr << e.what() << '\n';
+        }
     } else {
         std::cout << "Error " << error_code << '\n';
     }

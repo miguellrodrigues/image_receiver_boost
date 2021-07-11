@@ -25,22 +25,39 @@ void session::start() {
     read();
 }
 
+unsigned int buffToInteger(const char * buffer)
+{
+    auto a = static_cast<unsigned int>(static_cast<unsigned char>(buffer[0]) << 24 |
+                             static_cast<unsigned char>(buffer[1]) << 16 |
+                             static_cast<unsigned char>(buffer[2]) << 8 |
+                             static_cast<unsigned char>(buffer[3]));
+    return a;
+}
+
 void session::do_read(const char *data, boost::system::error_code error_code, std::size_t length) {
     if (to_receive == 0) {
-        to_receive = int((u_char)data[0] << 24 |
-                         (u_char)data[1] << 16 |
-                         (u_char)data[2] << 8  |
-                         (u_char)data[3]);
+        to_receive = buffToInteger(data);
 
-        std::cout << "Starting to receive " << to_receive << " bytes of data" << '\n';
+        std::cout << buffToInteger(data) << '\n';
+
+        //std::cout << "Starting to receive " << to_receive << " bytes of data" << '\n';
 
         write(READ_TO_RECEIVE_DATA, 1);
     } else {
         if (received < to_receive) {
-            if (received + length >= to_receive) {
-                temp_data.push_back(data);
+            temp_data.push_back(data);
 
-                std::string eujanaoseioquefazer;
+            if (received + length >= to_receive) {
+                received += length;
+
+                //std::cout << "Received: " << received << " of " << to_receive << '\n';
+
+                to_receive = 0;
+                received = 0;
+
+                temp_data.clear();
+
+                /*std::string eujanaoseioquefazer;
 
                 for (const auto &item : temp_data) {
                     eujanaoseioquefazer.append(item);
@@ -48,16 +65,13 @@ void session::do_read(const char *data, boost::system::error_code error_code, st
 
                 temp_data.clear();
 
-                this->read_callback(eujanaoseioquefazer.data(), error_code, length);
-
-                to_receive = 0;
-                received = 0;
+                this->read_callback(eujanaoseioquefazer.data(), error_code, length);*/
 
                 write(READ_TO_RECEIVE_SIZE, 1);
             } else {
                 received += length;
 
-                std::cout << "Received: " << received << " of " << to_receive << '\n';
+                //std::cout << "Received: " << received << " of " << to_receive << '\n';
 
                 write(RECEIVING_DATA, 1);
             }

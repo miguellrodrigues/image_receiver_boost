@@ -42,7 +42,7 @@ private:
 
     std::vector<const char *> temp_data;
 
-    int to_receive = 0;
+    unsigned int to_receive = 0;
     unsigned int received = 0;
 };
 
