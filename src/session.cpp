@@ -38,7 +38,7 @@ session::message *session::buffToMessage(const char *buffer)
 
 void session::do_read(const char *data, boost::system::error_code error_code, std::size_t length) {
     if (std::string(data) == "EOF") {
-        std::cout << "Received: " << received << '\n';
+        std::cout << "Downloaded " << received << " Kilo Bytes" << '\n';
 
         received = 0;
 
@@ -50,10 +50,12 @@ void session::do_read(const char *data, boost::system::error_code error_code, st
 
         for (const auto &item : temp_data) {
             out.append(std::string(item->data));
+            delete item;
         }
 
         this->read_callback(out.data(), error_code, length);
 
+        out.clear();
         temp_data.clear();
 
         write(READ_TO_RECEIVE_DATA, 1);
@@ -61,6 +63,8 @@ void session::do_read(const char *data, boost::system::error_code error_code, st
         temp_data.push_back(buffToMessage(data));
 
         received += length;
+
+        //std::cout << "Received: " << length << '\n';
 
         write(RECEIVING_DATA, 1);
     }
