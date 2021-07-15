@@ -38,7 +38,7 @@ session::message *session::buffToMessage(const char *buffer)
 
 void session::do_read(const char *data, boost::system::error_code error_code, std::size_t length) {
     if (std::string(data) == "EOF") {
-        std::cout << "Downloaded " << received << " Kilo Bytes" << '\n';
+        std::cout << "Downloaded " << received / 1000 << " Kilo Bytes" << '\n';
 
         received = 0;
 
