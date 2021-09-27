@@ -6,12 +6,12 @@
 #include "../include/session.hpp"
 
 void server::accept() {
-    _acceptor.async_accept(
+  _acceptor.async_accept(
     [this](boost::system::error_code error_code, tcp::socket socket) {
         if (!error_code) {
-            std::make_shared<session>(std::move(socket), this->read_callback, this->write_callback)->start();
+          std::make_shared<session>(std::move(socket), this->read_callback, this->write_callback)->start();
         }
-
+        
         accept();
     });
 }
