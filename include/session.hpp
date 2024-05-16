@@ -13,16 +13,22 @@ class session : public std::enable_shared_from_this<session> {
 
 public:
     explicit session(
-      tcp::socket socket,
-      void (*read_callback)(const char *, boost::system::error_code, std::size_t),
-      void (*write_callback)(const char *, boost::system::error_code, std::size_t));
+            tcp::socket socket,
+            void (*read_callback)(std::vector<unsigned char>&, boost::system::error_code, std::size_t),
+            void (*write_callback)(std::vector<unsigned char>&, boost::system::error_code, std::size_t));
 
     void start();
 
+    enum {
+        max_length = 1024 * 64,
+        state_eof  = 1,
+        state_data = 0
+    };
+
     struct {
         unsigned int id;
-
-        char data[1024 * 64];
+        unsigned int size;
+        char data[max_length];
     } typedef message;
 
 private:
@@ -34,22 +40,18 @@ private:
 
     void do_write(const char *, boost::system::error_code, std::size_t);
 
-    void (*read_callback)(const char *, boost::system::error_code, std::size_t);
+    void (*read_callback)(std::vector<unsigned char>&, boost::system::error_code, std::size_t);
 
-    void (*write_callback)(const char *, boost::system::error_code, std::size_t);
+    void (*write_callback)(std::vector<unsigned char>&, boost::system::error_code, std::size_t);
 
     static message *buffToMessage(const char *buffer);
 
     tcp::socket _socket;
 
-    enum {
-        max_length = 1024 * 64
-    };
-
     char _data[max_length]{};
-
     std::vector<message *> temp_data;
 
+    unsigned int state    = 0;
     unsigned int received = 0;
 };
 
