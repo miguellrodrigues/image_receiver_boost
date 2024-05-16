@@ -9,28 +9,27 @@
 
 using boost::asio::ip::tcp;
 
-class server {
+class tcp_server {
 public:
-    server(
-      boost::asio::io_context &io_context,
-      short port,
-      void (*read_callback)(const char *, boost::system::error_code, std::size_t),
-      void (*write_callback)(const char *, boost::system::error_code, std::size_t))
-      : _acceptor(io_context, tcp::endpoint(tcp::v4(), port)) {
-      
-      accept();
-      
-      this->read_callback  = read_callback;
-      this->write_callback = write_callback;
+    tcp_server(
+            boost::asio::io_context &io_context,
+            short port,
+            void (*read_callback)(const char *, boost::system::error_code, std::size_t),
+            void (*write_callback)(const char *, boost::system::error_code, std::size_t)) : _acceptor(io_context,
+                                                                                                      tcp::endpoint(tcp::v4(), port)) {
+
+        accept();
+
+        this->read_callback = read_callback;
+        this->write_callback = write_callback;
     }
 
 private:
-    void accept();
-    
     tcp::acceptor _acceptor;
-    
+
+    void accept();
+
     void (*read_callback)(const char *, boost::system::error_code, std::size_t);
-    
     void (*write_callback)(const char *, boost::system::error_code, std::size_t);
 };
 

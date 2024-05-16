@@ -5,7 +5,7 @@
 #include "../include/tcp_server.hpp"
 #include "../include/session.hpp"
 
-void server::accept() {
+void tcp_server::accept() {
   _acceptor.async_accept(
     [this](boost::system::error_code error_code, tcp::socket socket) {
         if (!error_code) {
