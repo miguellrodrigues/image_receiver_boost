@@ -7,7 +7,6 @@
 #include <boost/bind/bind.hpp>
 #include <algorithm>
 #include <string>
-#include <iostream>
 
 #define READ_TO_RECEIVE_DATA "."
 #define RECEIVING_DATA "/"
@@ -24,6 +23,8 @@ session::session(
 
 void session::start() {
     read();
+
+    _out.reserve(10*max_length);
 }
 
 session::message *session::buffToMessage(const char *buffer) {
@@ -40,32 +41,39 @@ void session::do_read(const char *data, boost::system::error_code error_code, st
 
     switch (state) {
         case state_data:
+            write(RECEIVING_DATA, 1);
+
             temp_data.insert(temp_data.end(), buffToMessage(data));
             received += length;
-
-            write(RECEIVING_DATA, 1);
             break;
         case state_eof:
+            write(READ_TO_RECEIVE_DATA, 1);
+
+            received = 0;
+
             std::sort(temp_data.begin(), temp_data.end(), [](message *a, message *b) {
                 return a->id < b->id;
             });
 
-            std::vector<unsigned char> _out;
+            bool stop = false;
 
             for (auto packet : temp_data) {
                 unsigned int size = packet->size;
-                if (size >= max_length) continue;
+                if (size >= max_length) {
+                    delete packet;
+                    error_code = boost::asio::error::make_error_code(boost::asio::error::invalid_argument);
+                    break;
+                };
 
                 _out.insert(_out.end(), packet->data, packet->data + size);
                 delete packet;
             }
 
+            temp_data.clear();
+
             this->read_callback(_out, error_code, received);
 
-            temp_data.clear();
-            received = 0;
-
-            write(READ_TO_RECEIVE_DATA, 1);
+            _out.clear();
             break;
     }
 }

@@ -49,7 +49,9 @@ private:
     tcp::socket _socket;
 
     char _data[max_length]{};
+
     std::vector<message *> temp_data;
+    std::vector<unsigned char> _out;
 
     unsigned int state    = 0;
     unsigned int received = 0;
